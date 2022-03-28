@@ -1,4 +1,4 @@
-const Users = require('../users-model.js');
+const Users = require('../users/users-model.js');
 /*
   If the user does not have a session saved in the server
 
@@ -7,7 +7,7 @@ const Users = require('../users-model.js');
     "message": "You shall not pass!"
   }
 */
-function restricted() {
+function restricted(req, res, next) {
   if(req.session.user) {
     next()
   } else {
@@ -26,7 +26,7 @@ function restricted() {
     "message": "Username taken"
   }
 */
-async function checkUsernameFree() {
+async function checkUsernameFree(req, res, next) {
   try {
       const users = await Users.findBy({ username: req.body.username })
     if (!users.length) {
@@ -47,7 +47,7 @@ async function checkUsernameFree() {
     "message": "Invalid credentials"
   }
 */
-async function checkUsernameExists() {
+async function checkUsernameExists(req, res, next) {
   try {
     const users = await Users.findBy({ username: req.body.username }) 
     users.length ? next() : res.status(401).json({ message: "Invalid credentials" }); 
@@ -64,7 +64,7 @@ async function checkUsernameExists() {
     "message": "Password must be longer than 3 chars"
   }
 */
-function checkPasswordLength() {
+function checkPasswordLength(req, res, next) {
   const password = req.body.password;
   if (!password || password.length <=3) {
     res.status(422).json({ message: "Password must be longer than 3 chars" });
